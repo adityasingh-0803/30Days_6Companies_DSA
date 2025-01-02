@@ -1,0 +1,44 @@
+#leetcode 354
+class Solution {
+public:
+    int maxEnvelopes(vector<vector<int>>& envelopes) {
+        int n = envelopes.size();
+        if(n==0)
+        {
+            return 0;
+        }
+        sort(envelopes.begin() , envelopes.end() , [](const vector<int>&a , const vector<int>&b)
+        {
+            return a[0] < b[0] || (a[0] == b[0]  && a[1] > b[1]);
+        });
+
+        vector<int>ans;
+        ans.push_back(envelopes[0][1]);
+        for(int i=1 ; i<n ; i++)
+        {
+            if( envelopes[i][1] > ans.back())
+            {
+                ans.push_back(envelopes[i][1]);
+            }
+            else{
+                int ind = lower_bound(ans.begin() , ans.end() , envelopes[i][1]) - ans.begin();
+                ans[ind] = envelopes[i][1];
+            }
+        }
+        return ans.size();
+
+    }
+};
+
+
+Logic:
+Step 1: Sort the envelopes based on their width in ascending order.
+If two envelopes have the same width, sort them in descending order based on their height.
+This sorting step ensures that envelopes with the same width are ordered based on their height.
+
+Longest Increasing Subsequence (LIS):
+Initialize an array ans to track the longest increasing subsequence of heights.
+Iterate through each envelope after sorting.
+For each envelope, check if its height is greater than the last height in the ans array.
+If the height is greater, append it to the ans array.
+If the height is not greater, find the position in ans where the current height can replace the existing height while maintaining the increasing order.
