@@ -1,0 +1,146 @@
+#leetcode 497
+
+class Solution {
+public:
+        vector<vector<int>>react;
+        vector<int>v;
+int sides(vector<int>& r){
+    return (r[2] - r[0] + 1) * (r[3] - r[1] + 1);
+}
+    Solution(vector<vector<int>>& rects) {
+        react = rects;
+        
+        int totalsides = 0;
+        for(auto r : react){
+         totalsides += sides(r);
+        v.push_back(totalsides);
+        }
+
+    }
+    
+    vector<int> pick() {
+        int rnd = rand() % v.back();
+        int idx = upper_bound(v.begin(),v.end(), rnd) - v.begin();// next step i want the reactangle at r so 
+        auto r = react[idx];
+        int x_rnd = rand() % (r[2] - r[0] +1) + r[0] ; //rand() is offset(includes zero 0)
+        int y_rnd = rand() % (r[3] - r[1] + 1 ) + r[1]; 
+        return {x_rnd,y_rnd};
+    }
+};
+
+
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(rects);
+ * vector<int> param_1 = obj->pick();
+ */
+//  Let’s dry-run the code for a hypothetical example. We’ll walk through the execution step by step. Assume we’re given:
+
+// ### Input:
+// ```cpp
+// rects = [[1, 1, 3, 3], [4, 4, 5, 5]]
+// ```
+
+// ### Step-by-Step Explanation:
+
+// #### **1. Class Members**
+// - `v`: A cumulative area array to store the total number of points covered by rectangles up to each rectangle.
+// - `rects`: A 2D vector containing the input rectangles.
+
+// ---
+
+// #### **2. Function: `area`**
+// The `area` function calculates the total number of integer points in a rectangle. For a rectangle `[x1, y1, x2, y2]`:
+
+// ```cpp
+// int area(vector<int>& r) {
+//     return (r[2] - r[0] + 1) * (r[3] - r[1] + 1);
+// }
+// ```
+
+// For example:
+// - For `[1, 1, 3, 3]`, `(3 - 1 + 1) * (3 - 1 + 1) = 9`.
+// - For `[4, 4, 5, 5]`, `(5 - 4 + 1) * (5 - 4 + 1) = 4`.
+
+// ---
+
+// #### **3. Constructor: `Solution`**
+// This initializes the class with the input rectangles and builds the cumulative area array `v`.
+
+// ```cpp
+// Solution(vector<vector<int>> rect) {
+//     rects = rect;
+//     int totalArea = 0;
+//     for (auto r : rects) {
+//         totalArea += area(r);
+//         v.push_back(totalArea);
+//     }
+// }
+// ```
+
+// **Execution for `rects = [[1, 1, 3, 3], [4, 4, 5, 5]]`:**
+// 1. `totalArea = 0` initially.
+// 2. For `[1, 1, 3, 3]`, `area = 9`. Update `totalArea = 9`. Append `v = [9]`.
+// 3. For `[4, 4, 5, 5]`, `area = 4`. Update `totalArea = 13`. Append `v = [9, 13]`.
+
+// ---
+
+// #### **4. Function: `pick`**
+// This picks a random point from the union of rectangles.
+
+// **Steps:**
+// 1. **Pick a random rectangle:**  
+//    ```cpp
+//    int rnd = rand() % v.back();
+//    ```
+//    - `v.back()` is the total area of all rectangles (`13` in this case).  
+//    - `rnd` is a random number in `[0, 12]`.
+
+// 2. **Find the rectangle containing the random point:**  
+//    ```cpp
+//    int idx = upper_bound(v.begin(), v.end(), rnd) - v.begin();
+//    ```
+//    - `upper_bound` locates the first rectangle in `v` whose cumulative area exceeds `rnd`.
+//    - Example: If `rnd = 8`, `upper_bound` returns index `0` (first rectangle). If `rnd = 10`, it returns `1` (second rectangle).
+
+// 3. **Pick a random point within the selected rectangle:**  
+//    ```cpp
+//    auto r = rects[idx];
+//    int x = rand() % (r[2] - r[0] + 1) + r[0];
+//    int y = rand() % (r[3] - r[1] + 1) + r[1];
+//    return { x, y };
+//    ```
+//    - Generate random `x` in `[r[0], r[2]]` and `y` in `[r[1], r[3]]`.
+
+// ---
+
+// ### Dry-Run Example:
+
+// #### **Input:**
+// ```cpp
+// rects = [[1, 1, 3, 3], [4, 4, 5, 5]]
+// ```
+
+// #### **Initialization:**
+// - `v = [9, 13]` (cumulative area array).
+
+// #### **First Call to `pick`:**
+// 1. Generate `rnd = 8` (`rand() % 13`).
+// 2. Use `upper_bound`: `idx = 0` (first rectangle `[1, 1, 3, 3]`).
+// 3. Pick random `x` and `y`:
+//    - `x = rand() % (3 - 1 + 1) + 1 = rand() % 3 + 1`. Assume `x = 2`.
+//    - `y = rand() % (3 - 1 + 1) + 1 = rand() % 3 + 1`. Assume `y = 3`.
+// 4. Return: `[2, 3]`.
+
+// #### **Second Call to `pick`:**
+// 1. Generate `rnd = 10`.
+// 2. Use `upper_bound`: `idx = 1` (second rectangle `[4, 4, 5, 5]`).
+// 3. Pick random `x` and `y`:
+//    - `x = rand() % (5 - 4 + 1) + 4 = rand() % 2 + 4`. Assume `x = 5`.
+//    - `y = rand() % (5 - 4 + 1) + 4 = rand() % 2 + 4`. Assume `y = 4`.
+// 4. Return: `[5, 4]`.
+
+// ---
+
+// This process ensures every point in the union of rectangles is equally likely to be selected.
